@@ -43,6 +43,7 @@ def update_progress(
             existing.completed_at = datetime.utcnow()
         db.commit()
         db.refresh(existing)
+        _update_credits(current_user.id, db)
         return existing
 
     progress = Progress(
