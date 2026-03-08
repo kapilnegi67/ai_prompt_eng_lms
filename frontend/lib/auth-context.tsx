@@ -17,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  setAuth: (token: string) => void;
+  setAuth: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
   loading: true,
-  setAuth: () => {},
+  setAuth: async () => {},
   logout: () => {},
   refreshUser: async () => {},
 });
@@ -57,10 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setAuth = (newToken: string) => {
+  const setAuth = async (newToken: string) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
-    refreshUser();
+    setLoading(true);
+    await refreshUser();
+    setLoading(false);
   };
 
   const logout = () => {
