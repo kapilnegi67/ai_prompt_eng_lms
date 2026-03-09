@@ -18,21 +18,21 @@ def submit_assignment(
 ):
     """Submit an assignment or lab work."""
     # Require at least one target
-    if not submission_data.assignment_id and not submission_data.lab_id:
+    if submission_data.assignment_id is None and submission_data.lab_id is None:
         raise HTTPException(
             status_code=400,
             detail="Either assignment_id or lab_id must be provided",
         )
 
     # Validate assignment or lab exists
-    if submission_data.assignment_id:
+    if submission_data.assignment_id is not None:
         assignment = db.query(Assignment).filter(
             Assignment.id == submission_data.assignment_id
         ).first()
         if not assignment:
             raise HTTPException(status_code=404, detail="Assignment not found")
 
-    if submission_data.lab_id:
+    if submission_data.lab_id is not None:
         lab = db.query(Lab).filter(Lab.id == submission_data.lab_id).first()
         if not lab:
             raise HTTPException(status_code=404, detail="Lab not found")
