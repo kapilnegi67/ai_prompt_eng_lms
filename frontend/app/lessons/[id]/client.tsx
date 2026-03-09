@@ -67,17 +67,18 @@ export default function LessonPage() {
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">{lesson.title}</h1>
 
-      {/* Lesson Cover Image */}
+      {/* Lesson Video */}
       {lesson.video_url && (
-        <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-8 relative">
-          <img
+        <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-8">
+          <video
             src={lesson.video_url}
-            alt={lesson.title}
+            controls
             className="w-full h-full object-cover"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-            <p className="text-white text-sm font-medium">{lesson.duration_minutes} min lesson</p>
-          </div>
+            poster=""
+            preload="metadata"
+          >
+            Your browser does not support the video tag.
+          </video>
         </div>
       )}
 
