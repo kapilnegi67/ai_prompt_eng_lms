@@ -27,6 +27,8 @@ def wait_for_db(max_retries: int = 30, delay: int = 2):
 
 def init_db():
     """Initialize the database and run seed data."""
-    wait_for_db()
+    from app.config import settings
+    if not settings.DATABASE_URL.startswith("sqlite"):
+        wait_for_db()
     Base.metadata.create_all(bind=engine)
     seed_database()

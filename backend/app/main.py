@@ -7,13 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db.database import engine, Base
 from app.api import auth, courses, playground, assignments, progress, admin
+from app.startup import init_db
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create all tables
-Base.metadata.create_all(bind=engine)
+# Initialize database and seed data
+init_db()
 
 app = FastAPI(
     title="Prompt Engineering Learning Platform",

@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/prompt_eng_lms"
+    DATABASE_URL: str = "sqlite:////data/app.db"
     SECRET_KEY: str = "change-me-in-production-use-a-strong-random-key"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
