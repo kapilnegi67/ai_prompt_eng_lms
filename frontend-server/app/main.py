@@ -17,14 +17,22 @@ app.add_middleware(
 )
 
 # Path to the static export directory
-STATIC_DIR = Path(__file__).parent.parent / "static"
+STATIC_DIR = (Path(__file__).parent.parent / "static").resolve()
+
+
+def _safe_path(base: Path, *parts: str) -> Path | None:
+    """Resolve a path and ensure it stays within the base directory."""
+    resolved = (base / Path(*parts)).resolve()
+    if not str(resolved).startswith(str(base)):
+        return None
+    return resolved
 
 
 @app.get("/_next/{path:path}")
 async def next_assets(path: str):
     """Serve Next.js build assets."""
-    file_path = STATIC_DIR / "_next" / path
-    if file_path.is_file():
+    file_path = _safe_path(STATIC_DIR, "_next", path)
+    if file_path is not None and file_path.is_file():
         # Determine content type
         suffix = file_path.suffix
         media_types = {
@@ -58,18 +66,18 @@ async def serve_page(request: Request, path: str = ""):
             return FileResponse(index_file, media_type="text/html")
 
     # Try exact file match first (for static assets like favicon.ico)
-    exact_file = STATIC_DIR / clean_path
-    if exact_file.is_file():
+    exact_file = _safe_path(STATIC_DIR, clean_path)
+    if exact_file is not None and exact_file.is_file():
         return FileResponse(exact_file)
 
     # Try directory with index.html (trailingSlash mode)
-    dir_index = STATIC_DIR / clean_path / "index.html"
-    if dir_index.is_file():
+    dir_index = _safe_path(STATIC_DIR, clean_path, "index.html")
+    if dir_index is not None and dir_index.is_file():
         return FileResponse(dir_index, media_type="text/html")
 
     # Try .html extension
-    html_file = STATIC_DIR / f"{clean_path}.html"
-    if html_file.is_file():
+    html_file = _safe_path(STATIC_DIR, f"{clean_path}.html")
+    if html_file is not None and html_file.is_file():
         return FileResponse(html_file, media_type="text/html")
 
     # Fallback to root index.html for SPA routing

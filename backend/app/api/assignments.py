@@ -17,6 +17,13 @@ def submit_assignment(
     db: Session = Depends(get_db),
 ):
     """Submit an assignment or lab work."""
+    # Require at least one target
+    if not submission_data.assignment_id and not submission_data.lab_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Either assignment_id or lab_id must be provided",
+        )
+
     # Validate assignment or lab exists
     if submission_data.assignment_id:
         assignment = db.query(Assignment).filter(
