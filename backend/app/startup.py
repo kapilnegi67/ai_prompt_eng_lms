@@ -2,7 +2,7 @@
 import logging
 import time
 
-from sqlalchemy import text
+from sqlalchemy import text, or_
 
 from app.db.database import engine, Base, SessionLocal
 from app.models.models import User, Lesson, LessonSection, SectionQuiz
@@ -32,7 +32,7 @@ def _migrate_video_urls():
     db = SessionLocal()
     try:
         lessons = db.query(Lesson).filter(
-            ~Lesson.video_url.like("%mixkit.co%")
+            or_(Lesson.video_url.is_(None), ~Lesson.video_url.like("%mixkit.co%"))
         ).all()
         if not lessons:
             return
