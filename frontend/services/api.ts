@@ -84,6 +84,23 @@ export async function getAssignment(id: number) {
   return fetchAPI(`/assignments/${id}`);
 }
 
+// ── Lesson Sections ─────────────────────────────────────────────────────────
+
+export async function getLessonSections(lessonId: number) {
+  return fetchAPI(`/lessons/${lessonId}/sections`);
+}
+
+export async function getSectionProgress(lessonId: number) {
+  return fetchAPI(`/lessons/${lessonId}/section-progress`);
+}
+
+export async function submitSectionQuiz(sectionId: number, answers: Record<number, string>) {
+  return fetchAPI(`/sections/${sectionId}/submit-quiz`, {
+    method: 'POST',
+    body: JSON.stringify({ answers }),
+  });
+}
+
 // ── Prompt Playground ────────────────────────────────────────────────────────
 
 export async function evaluatePrompt(data: {

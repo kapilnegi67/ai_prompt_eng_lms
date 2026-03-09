@@ -103,6 +103,10 @@ class Lesson(Base):
     video = relationship("Video", back_populates="lesson", uselist=False)
     exercises = relationship("Exercise", back_populates="lesson", cascade="all, delete-orphan")
     quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete-orphan")
+    sections = relationship(
+        "LessonSection", back_populates="lesson", cascade="all, delete-orphan",
+        order_by="LessonSection.order",
+    )
 
 
 class Video(Base):
@@ -154,6 +158,59 @@ class Quiz(Base):
 
     # Relationships
     lesson = relationship("Lesson", back_populates="quizzes")
+
+
+class LessonSection(Base):
+    """Sub-topic section within a lesson for interactive flow."""
+
+    __tablename__ = "lesson_sections"
+
+    id = Column(Integer, primary_key=True, index=True)
+    lesson_id = Column(Integer, ForeignKey("lessons.id"), nullable=False)
+    title = Column(String(255), nullable=False)
+    content = Column(Text, nullable=True)
+    order = Column(Integer, default=0)
+
+    # Relationships
+    lesson = relationship("Lesson", back_populates="sections")
+    section_quizzes = relationship(
+        "SectionQuiz", back_populates="section", cascade="all, delete-orphan"
+    )
+
+
+class SectionQuiz(Base):
+    """MCQ question tied to a lesson section."""
+
+    __tablename__ = "section_quizzes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    section_id = Column(Integer, ForeignKey("lesson_sections.id"), nullable=False)
+    question = Column(Text, nullable=False)
+    options = Column(JSON, nullable=True)
+    correct_answer = Column(String(255), nullable=False)
+    explanation = Column(Text, nullable=True)
+    order = Column(Integer, default=0)
+
+    # Relationships
+    section = relationship("LessonSection", back_populates="section_quizzes")
+
+
+class SectionProgress(Base):
+    """Track user quiz completion per lesson section."""
+
+    __tablename__ = "section_progress"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    section_id = Column(Integer, ForeignKey("lesson_sections.id"), nullable=False)
+    score = Column(Float, default=0.0)
+    passed = Column(Boolean, default=False)
+    attempts = Column(Integer, default=0)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Relationships
+    user = relationship("User")
+    section = relationship("LessonSection")
 
 
 class Lab(Base):

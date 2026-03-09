@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.db.database import engine, Base
-from app.api import auth, courses, playground, assignments, progress, admin
+from app.api import auth, courses, playground, assignments, progress, admin, sections
 from app.startup import init_db
 
 # Configure logging
@@ -40,6 +40,7 @@ app.include_router(playground.router)
 app.include_router(assignments.router)
 app.include_router(progress.router)
 app.include_router(admin.router)
+app.include_router(sections.router)
 
 
 @app.get("/")

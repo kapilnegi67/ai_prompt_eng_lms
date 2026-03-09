@@ -5,8 +5,8 @@ import time
 from sqlalchemy import text
 
 from app.db.database import engine, Base, SessionLocal
-from app.models.models import User, Lesson
-from app.seed import seed_database
+from app.models.models import User, Lesson, LessonSection, SectionQuiz
+from app.seed import seed_database, _seed_lesson_sections
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +66,26 @@ def wait_for_db(max_retries: int = 30, delay: int = 2):
     raise Exception("Database not available after maximum retries")
 
 
+def _migrate_lesson_sections():
+    """Seed lesson sections for existing deployments that don't have them yet."""
+    db = SessionLocal()
+    try:
+        existing = db.query(LessonSection).first()
+        if existing:
+            return  # already seeded
+        lessons = db.query(Lesson).order_by(Lesson.id).all()
+        if not lessons:
+            return
+        _seed_lesson_sections(db, lessons)
+        db.commit()
+        logger.info(f"Seeded {len(lessons) * 3} lesson sections with quizzes.")
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Lesson sections migration failed: {e}")
+    finally:
+        db.close()
+
+
 def init_db():
     """Initialize the database and run seed data."""
     from app.config import settings
@@ -74,3 +94,4 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     seed_database()
     _migrate_video_urls()
+    _migrate_lesson_sections()

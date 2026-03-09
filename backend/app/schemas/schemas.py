@@ -158,6 +158,66 @@ class QuizResponse(BaseModel):
         from_attributes = True
 
 
+# ── Section Schemas ──────────────────────────────────────────────────────
+
+
+class SectionQuizResponse(BaseModel):
+    id: int
+    section_id: int
+    question: str
+    options: Optional[list] = None
+    order: int
+
+    class Config:
+        from_attributes = True
+
+
+class SectionQuizWithAnswer(SectionQuizResponse):
+    """Include correct_answer and explanation (used for quiz results)."""
+    correct_answer: str
+    explanation: Optional[str] = None
+
+
+class LessonSectionResponse(BaseModel):
+    id: int
+    lesson_id: int
+    title: str
+    content: Optional[str] = None
+    order: int
+    section_quizzes: list[SectionQuizResponse] = []
+
+    class Config:
+        from_attributes = True
+
+
+class SectionProgressResponse(BaseModel):
+    id: int
+    user_id: int
+    section_id: int
+    score: float
+    passed: bool
+    attempts: int
+    completed_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class QuizSubmission(BaseModel):
+    """Submit answers for a section quiz."""
+    answers: dict[int, str]  # quiz_id -> selected answer
+
+
+class QuizResultResponse(BaseModel):
+    """Result of a section quiz submission."""
+    score: float
+    passed: bool
+    total_questions: int
+    correct_count: int
+    attempts: int
+    results: list[dict]  # per-question result with correct_answer and explanation
+
+
 # ── Lab Schemas ───────────────────────────────────────────────────────────────
 
 
