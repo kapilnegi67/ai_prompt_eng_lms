@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { getLesson, updateProgress, evaluatePrompt } from '@/services/api';
-import { ArrowLeft, CheckCircle, Loader2, Play, Lightbulb, Send } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Loader2, Lightbulb, Send } from 'lucide-react';
 
 export default function LessonPage() {
   const { user, loading: authLoading } = useAuth();
@@ -67,15 +67,17 @@ export default function LessonPage() {
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">{lesson.title}</h1>
 
-      {/* Video Player */}
+      {/* Lesson Cover Image */}
       {lesson.video_url && (
-        <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-8">
-          <iframe
+        <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden mb-8 relative">
+          <img
             src={lesson.video_url}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+            alt={lesson.title}
+            className="w-full h-full object-cover"
           />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+            <p className="text-white text-sm font-medium">{lesson.duration_minutes} min lesson</p>
+          </div>
         </div>
       )}
 
