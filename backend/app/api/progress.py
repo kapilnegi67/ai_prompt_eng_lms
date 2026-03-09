@@ -25,7 +25,7 @@ def update_progress(
     db: Session = Depends(get_db),
 ):
     """Update student progress for a lesson/module/basket."""
-    if not progress_data.lesson_id and not progress_data.module_id and not progress_data.basket_id:
+    if progress_data.lesson_id is None and progress_data.module_id is None and progress_data.basket_id is None:
         raise HTTPException(
             status_code=400,
             detail="At least one of lesson_id, module_id, or basket_id must be provided",
@@ -33,11 +33,11 @@ def update_progress(
 
     # Check if progress record exists
     query = db.query(Progress).filter(Progress.user_id == current_user.id)
-    if progress_data.lesson_id:
+    if progress_data.lesson_id is not None:
         query = query.filter(Progress.lesson_id == progress_data.lesson_id)
-    elif progress_data.module_id:
+    elif progress_data.module_id is not None:
         query = query.filter(Progress.module_id == progress_data.module_id)
-    elif progress_data.basket_id:
+    elif progress_data.basket_id is not None:
         query = query.filter(Progress.basket_id == progress_data.basket_id)
 
     existing = query.first()

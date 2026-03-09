@@ -12,7 +12,12 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard');
+      // Don't redirect to dashboard if the browser URL is a different page
+      // (happens with SPA fallback on static hosting)
+      const browserPath = window.location.pathname;
+      if (browserPath === '/' || browserPath === '') {
+        router.push('/dashboard');
+      }
     }
   }, [user, loading, router]);
 
