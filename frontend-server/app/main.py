@@ -23,7 +23,7 @@ STATIC_DIR = (Path(__file__).parent.parent / "static").resolve()
 def _safe_path(base: Path, *parts: str) -> Path | None:
     """Resolve a path and ensure it stays within the base directory."""
     resolved = (base / Path(*parts)).resolve()
-    if not str(resolved).startswith(str(base)):
+    if not str(resolved).startswith(str(base) + os.sep) and resolved != base:
         return None
     return resolved
 
