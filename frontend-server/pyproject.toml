@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "prompt-eng-lms-frontend"
+version = "0.1.0"
+description = "Static file server for Prompt Engineering LMS frontend"
+authors = ["Devin AI"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {version = "^0.115.0", extras = ["standard"]}
+uvicorn = {version = "^0.24.0", extras = ["standard"]}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
